@@ -1,31 +1,251 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@using DM.Models
+@using Microsoft.AspNet.Identity
+@model DM.ViewModels.IncidentsViewModel
+
+@{
+    var id = 1;
+
+    if (Model.Incident != null)
+    {
+        id = Model.Incident.Id;
+    }
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+<div>
+    <hr />
+    <table class="table table-hover">
+        <tbody>
+            @* Table Headers *@
+            <tr>
+                <th scope="row">ID</th>
+                <th scope="row">Title</th>
+                <th scope="row">Severity</th>
+                <th scope="row">Status</th>
+            </tr>
+
+            @{
+                var item = Model.Incident;
+            }
+
+            @* Data Rows *@
+            @if (Model != null && Model.Incidents != null)
+            {
+                foreach (var incident in Model.Incidents)
+                {
+                    item = incident;
+                    <tr>
+                        @{
+                            int severity = (int)incident.Severity;  // Otherwise jQuery reads this as "Severity" and cannot set the DropDownList
+                            int status = (int)incident.Status;      // Otherwise jQuery reads this as "Status" and cannot set the DropDownList
+                        }
+
+                        <td>
+
+
+                            @if (Request.IsAuthenticated)
+                            {
+                                <a href="@Url.Action("Edit", new { id = incident.Id })"
+                                   data-toggle="modal"
+                                   data-id="@incident.Id"
+                                   data-name="@incident.Name"
+                                   data-title="@incident.Title"
+                                   data-severity="@severity"
+                                   data-status="@status"
+                                   data-target="#editForm">@incident.Name</a>
+                            }
+                            else
+                            {
+                                <a href="~/Account/Login">@incident.Name</a>
+                            }
+
+                        </td>
+                        <td>@incident.Title</td>
+                        <td>
+                            @switch (incident.Severity)
+                            {
+                                case Severity.Minor:<span class="badge badge-pill badge-dark" title="Minor">Minor</span>
+                                    break;
+                                case Severity.Major: <span class="badge badge-pill badge-warning" title="Major">Major</span>
+                                    break;
+                                case Severity.Critical: <span class="badge badge-pill badge-danger" title="Critical">Critical</span>
+                                    break;
+                            }
+                        </td>
+                        <td>
+                            @switch (incident.Status)
+                            {
+                                case (uint)Status.Open:<span class="badge badge-pill badge-dark" title="Open">Open</span>
+                                    break;
+                                case Status.InProgress: <span class="badge badge-pill badge-primary" title="InProgress">InProgress</span>
+                                    break;
+                                case Status.Resolved: <span class="badge badge-pill badge-success" title="Resolved">Resolved</span>
+                                    break;
+                                case Status.Closed: <span class="badge badge-pill badge-light" title="Closed">Closed</span>
+                                    break;
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @{
+        var num = 1;
+        var evaluateNum = false;
+        object search = "";
+        var IsNullIncidentName = false;
+        var totalIncidents = 0;
+        var totalPages = 0;
+
+        if (Model != null)
+        {
+            if (ViewData["page"] != null)
+            {
+                evaluateNum = int.TryParse(ViewData["page"].ToString(), out num);
+            }
+
+            search = ViewData["search"];
+            IsNullIncidentName = false;
+            totalIncidents = Model.Minor + Model.Major + Model.Critical;
+            totalPages = totalIncidents % 10 == 0 ? totalIncidents / 10 : 1 + totalIncidents / 10;
+        }
+
+
+        if (totalIncidents > 0 && totalIncidents <= 10)
+        {
+            totalPages = 1;
+        }
+        else if (totalIncidents == 0)
+        {
+            num = 0;
+        }
+
+        if (Model != null && Model.Incident != null)
+        {
+            IsNullIncidentName = Model.Incident.Name == null;
+        }
+
+    }
+
+    @* Pagination UI *@
+    <div>
+        @if (IsNullIncidentName == false)
+        {
+            <form id="pagination">
+                <input id="page" name="page" type="hidden" value="@num" />
+                <input id="search" name="search" type="hidden" value="@search" /> @*Input field "search" is located under _LayoutPartial1*@
+            </form>
+            <ul class="pagination pagination-lg">
+                <li class="page-item" onclick="submitForm(0);">
+                    <a class="page-link" href="#">&laquo;</a>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link" href="#">@num | @totalPages </a>
+                </li>
+                <li class="page-item" onclick="submitForm(1);">
+                    <a class="page-link" href="#">&raquo;</a>
+                </li>
+            </ul>
+        }
+    </div>
 </div>
 
+@* Error and Warning Popup *@
 <div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
+    @if (Model == null)
+    {
+        <div class="alert alert-dismissible alert-danger">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Error</strong> <br />
+            <a class="alert-link">Database Access</a>
+        </div>
+    }
+
 </div>
+
+@* Modal Edit Window *@
+@Html.Partial("Edit")
+
+<!-- jQuery, Bootstrap JS -->
+@* Submit Form JS Function *@
+<script>
+    function submitForm(p) {
+        var page = parseInt(document.getElementById('page').value);   // Get the current input's page   value
+        var search = document.getElementById('search').value;         // Get the current input's search value
+
+        // Paging Left or Right
+        if (p == 0 && page > 1) {
+            page--;
+        }
+        else if (p == 1 && page > 0 && page < @totalPages)
+            page++;
+
+        if (page < 1)
+            page = 1;
+
+        $('#page').val(page);           // Set hidden input's page   value
+        $('#search').val(search);       // Set hidden input's search value
+        $('#pagination').submit();      // Submit Form
+
+        // Do nothing, just submit Form
+        if (p == 2) {
+            $(submitEditForm).submit();
+        }
+
+        // Add hidden field (delete) and submit Form
+        if (p == 3) {
+            var input = document.createElement("input");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "delete");
+            input.setAttribute("value", "true");
+            document.getElementById("submitEditForm").appendChild(input);
+            $(submitEditForm).submit();
+        }
+    }
+
+    // Bootstrap event handler (on shown #editForm Modal)
+    $(document).ready($('#editForm').on('show.bs.modal', function (e) {
+
+        document.getElementById('submitEditForm').reset();          // Clear the Form always on Modal shown
+        document.getElementById('buttonDelete').disabled = true;    // Disable button
+
+        @{
+            var hasRole = User.IsInRole(RoleName.CanDeleteIncidents).ToString().ToLower();
+        }
+
+
+        if (@hasRole) {
+            document.getElementById('buttonDelete').disabled = false;
+        }
+        else {
+            document.getElementById('buttonDelete').title = "Only User with Admin Role are allowed to Delete Items";
+        }
+
+        $('.field-validation-valid span').html('');         // Clears the Validation Errors as appear within the <span> HTML tags
+
+        var id = $(e.relatedTarget).data('id');
+        var name = $(e.relatedTarget).data('name');
+        var title = $(e.relatedTarget).data('title');
+        var severity = $(e.relatedTarget).data('severity');
+        var status = $(e.relatedTarget).data('status');
+
+        $(incidentId).val(id);
+        $(incidentName).val(name);
+        $(incidentTitle).val(title);
+        $(incidentSeverity).val(severity);
+        $(incidentStatus).val(status);
+    }));
+
+
+</script>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval") @* Renders/References all jquery.validate* Scripts as a single File (bundle) *@
+
+    @* No need explicitly:
+        <script src="~/Scripts/jquery.validate.min.js" type="text/javascript"></script>
+        <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    *@
+
+}
