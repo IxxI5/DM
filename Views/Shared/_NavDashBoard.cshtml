@@ -1,0 +1,49 @@
+﻿@* Incidents Dashboard *@
+@{
+    if (Model != null)
+    {
+        <ul class="list-group">
+            SEVERITY
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <text>Minor &nbsp; &nbsp; &nbsp;</text>
+                <span class="badge badge-pill badge-dark">@Model.Minor</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <text>Major &nbsp; &nbsp; &nbsp;</text>
+                <span class="badge badge-pill badge-warning">@Model.Major</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <text>Critical &nbsp; &nbsp; &nbsp;</text>
+                <span class="badge badge-pill badge-danger">@Model.Critical</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <text>Total &nbsp; &nbsp; &nbsp;</text>
+                @{
+                    var totalIncidents = Model.Minor + Model.Major + Model.Critical;
+                    <span class="badge badge-info">@totalIncidents</span>
+                }
+            </li>
+        </ul>
+        <ul class="list-group">
+            STATUS
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <text>Open &nbsp; &nbsp; &nbsp;</text>
+                <span class="badge badge-pill badge-dark">@Model.Open</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <text>In Progress &nbsp; &nbsp; &nbsp;</text>
+                <span class="badge badge-pill badge-primary">@Model.InProgress</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <text>Resolved &nbsp; &nbsp; &nbsp;</text>
+                <span class="badge badge-pill badge-success">@Model.Resolved</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <text>Closed &nbsp; &nbsp; &nbsp;</text>
+                <span class="badge badge-pill badge-light">@Model.Closed</span>
+            </li>
+        </ul>
+    }
+}
+
+
