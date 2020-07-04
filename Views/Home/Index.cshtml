@@ -96,6 +96,7 @@
         var IsNullIncidentName = false;
         var totalIncidents = 0;
         var totalPages = 0;
+        var pageIncidents = 0;
 
         if (Model != null)
         {
@@ -108,6 +109,7 @@
             IsNullIncidentName = false;
             totalIncidents = Model.Minor + Model.Major + Model.Critical;
             totalPages = totalIncidents % 10 == 0 ? totalIncidents / 10 : 1 + totalIncidents / 10;
+            pageIncidents = Model.Incidents.ToList().Count;
         }
 
 
@@ -177,8 +179,14 @@
         if (p == 0 && page > 1) {
             page--;
         }
-        else if (p == 1 && page > 0 && page < @totalPages)
+        else if (@pageIncidents == 10 && page < @totalIncidents) {
             page++;
+        }
+        else {
+            page = 1;
+            totalPages = 1;
+        }
+            
 
         if (page < 1)
             page = 1;
