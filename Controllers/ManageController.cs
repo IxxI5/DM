@@ -8,7 +8,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using DM.Models;
 
-namespace DM.Controllers
+namespace DM.Controllers 
 {
     [Authorize]
     public class ManageController : Controller
