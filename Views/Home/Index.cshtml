@@ -179,18 +179,10 @@
         if (p == 0 && page > 1) {
             page--;
         }
-        else if (@pageIncidents == 10 && page < @totalIncidents) {
+        else if (p == 1 && page < @totalPages) {
             page++;
         }
-        else {
-            page = 1;
-            totalPages = 1;
-        }
-            
-
-        if (page < 1)
-            page = 1;
-
+        
         $('#page').val(page);           // Set hidden input's page   value
         $('#search').val(search);       // Set hidden input's search value
         $('#pagination').submit();      // Submit Form
