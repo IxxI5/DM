@@ -70,13 +70,13 @@ namespace DM.Controllers
                 var pageIncidents = new IncidentsViewModel()
                 {
                     Incidents = incidents,
-                    Minor = _context.Incidents.ToList().FindAll(incident => incident.Severity == Severity.Minor).Count(),
-                    Major = _context.Incidents.ToList().FindAll(incident => incident.Severity == Severity.Major).Count(),
-                    Critical = _context.Incidents.ToList().FindAll(incident => incident.Severity == Severity.Critical).Count(),
-                    Open = _context.Incidents.ToList().FindAll(incident => incident.Status == Status.Open).Count(),
-                    InProgress = _context.Incidents.ToList().FindAll(incident => incident.Status == Status.InProgress).Count(),
-                    Resolved = _context.Incidents.ToList().FindAll(incident => incident.Status == Status.Resolved).Count(),
-                    Closed = _context.Incidents.ToList().FindAll(incident => incident.Status == Status.Closed).Count()
+                    Minor = incidentsFiltered.ToList().FindAll(incident => incident.Severity == Severity.Minor).Count(),
+                    Major = incidentsFiltered.ToList().FindAll(incident => incident.Severity == Severity.Major).Count(),
+                    Critical = incidentsFiltered.ToList().FindAll(incident => incident.Severity == Severity.Critical).Count(),
+                    Open = incidentsFiltered.ToList().FindAll(incident => incident.Status == Status.Open).Count(),
+                    InProgress = incidentsFiltered.ToList().FindAll(incident => incident.Status == Status.InProgress).Count(),
+                    Resolved = incidentsFiltered.ToList().FindAll(incident => incident.Status == Status.Resolved).Count(),
+                    Closed = incidentsFiltered.ToList().FindAll(incident => incident.Status == Status.Closed).Count()
                 };
 
                 ViewData["page"] = page;
